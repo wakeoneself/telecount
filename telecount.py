@@ -4,6 +4,7 @@ import re
 from collections import Counter
 import argparse
 from telethon import TelegramClient
+from telethon.tl.types import InputPeerChannel
 from dotenv import load_dotenv
 import os
 
@@ -13,6 +14,10 @@ load_dotenv()
 # Set up logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
+
+# Disable Telethon's logs for connection
+logging.getLogger('telethon.network').setLevel(logging.WARNING)
+logging.getLogger('telethon.client.telegrambaseclient').setLevel(logging.WARNING)
 
 # Get data from environment variables
 api_id = os.getenv('API_ID')
@@ -48,9 +53,13 @@ async def count_words(client, channel, limit):
 
 async def main(channel_username, post_limit):
     async with TelegramClient('session', api_id, api_hash) as client:
+        logger.info("Connecting to Telegram...")
         await client.start(phone=phone_number)
+        logger.info("Connected successfully")
 
+        logger.info(f"Retrieving channel information: {channel_username}")
         channel = await client.get_entity(channel_username)
+        
         logger.info(f"Starting to parse channel: {channel_username}")
         logger.info(f"Number of posts to analyze: {post_limit}")
 
