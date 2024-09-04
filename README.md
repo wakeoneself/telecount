@@ -2,9 +2,7 @@
 
 This script analyzes messages in a Telegram channel and counts word frequency. It uses the [Telethon library](https://github.com/LonamiWebs/Telethon) to interact with the Telegram API.
 
-<text-center>
 <img src="https://raw.githubusercontent.com/wakeoneself/telecount/main/telecount_demo.gif" width="600" alt="Demo of the application"/>
-</text-center>
 
 ## Features
 
