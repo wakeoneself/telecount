@@ -27,14 +27,16 @@ if not all([api_id, api_hash, phone_number]):
 # Minimum word length to consider
 MIN_WORD_LENGTH = 3
 
+# Regular expression for matching words in multiple languages
+WORD_REGEX = re.compile(r'\b[\w-]+\b', re.UNICODE)
+
 async def count_words(client, channel, limit):
     word_counter = Counter()
     message_count = 0
 
     async for message in client.iter_messages(channel, limit=limit):
         if message.text:
-            # Use Unicode property to match letters from all languages
-            words = re.findall(r'\b\p{L}{' + str(MIN_WORD_LENGTH) + r',}\b', message.text.lower(), re.UNICODE)
+            words = [word.lower() for word in WORD_REGEX.findall(message.text) if len(word) >= MIN_WORD_LENGTH]
             word_counter.update(words)
             message_count += 1
 
