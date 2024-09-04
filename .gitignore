@@ -1,5 +1,6 @@
 .env
 myenv/
+venv/
 __pycache__/
 *.session
 .DS_Store
