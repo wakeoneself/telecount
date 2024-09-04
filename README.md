@@ -2,13 +2,15 @@
 
 This script analyzes messages in a Telegram channel and counts word frequency. It uses the [Telethon library](https://github.com/LonamiWebs/Telethon) to interact with the Telegram API.
 
-<img src="https://raw.githubusercontent.com/wakeoneself/telecount/main/telecount_demo.gif" width="500" alt="Demo of the application"/>
+<text-center>
+<img src="https://raw.githubusercontent.com/wakeoneself/telecount/main/telecount_demo.gif" width="600" alt="Demo of the application"/>
+</text-center>
 
 ## Features
 
 - Count word frequency in a specified Telegram channel
 - Ability to specify the number of messages to analyze
-- Ignore short words (configurable minimum length)
+- Configurable minimum word length to ignore short words
 - Use of .env file for storing sensitive data
 
 ## Requirements
@@ -47,18 +49,33 @@ This script analyzes messages in a Telegram channel and counts word frequency. I
 
 ## Usage
 
-Run the script by specifying the channel username (without the @ symbol) and the number of messages to analyze:
+Run the script by specifying the channel username (without the @ symbol), the number of messages to analyze, and optionally, the minimum word length:
 
 ```
-python telecount.py channelname 1000
+python telecount.py channelname 1000 [--min-length MIN_LENGTH]
 ```
 
-This will analyze the last 1000 messages in the "channelname" channel.
+- `channelname`: The username of the Telegram channel to analyze (without the @ symbol)
+- `1000`: The number of messages to analyze
+- `--min-length`: (Optional) The minimum length of words to consider. Default is 3 if not specified.
+
+Examples:
+
+1. Analyze 1000 messages, considering words of 3 or more characters (default):
+   ```
+   python telecount.py channelname 1000
+   ```
+
+2. Analyze 500 messages, considering words of 4 or more characters:
+   ```
+   python telecount.py channelname 500 --min-length 4
+   ```
+
+This will analyze the specified number of messages in the "channelname" channel and output the top 20 most frequently used words that meet the minimum length requirement.
 
 ## Notes
 
 - You may need to go through the Telegram authentication process on the first run.
-- The script ignores words shorter than 3 letters (this value can be changed in the code).
 - Results are output to the console as the top 20 most frequently used words.
 
 ## Security

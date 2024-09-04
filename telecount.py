@@ -29,19 +29,16 @@ if not all([api_id, api_hash, phone_number]):
     logger.error("Missing required environment variables. Make sure the .env file contains API_ID, API_HASH, and PHONE_NUMBER.")
     exit(1)
 
-# Minimum word length to consider
-MIN_WORD_LENGTH = 3
-
 # Regular expression for matching words in multiple languages
 WORD_REGEX = re.compile(r'\b[\w-]+\b', re.UNICODE)
 
-async def count_words(client, channel, limit):
+async def count_words(client, channel, limit, min_word_length):
     word_counter = Counter()
     message_count = 0
 
     async for message in client.iter_messages(channel, limit=limit):
         if message.text:
-            words = [word.lower() for word in WORD_REGEX.findall(message.text) if len(word) >= MIN_WORD_LENGTH]
+            words = [word.lower() for word in WORD_REGEX.findall(message.text) if len(word) >= min_word_length]
             word_counter.update(words)
             message_count += 1
 
@@ -51,7 +48,7 @@ async def count_words(client, channel, limit):
     logger.info(f"Total messages processed: {message_count}")
     return word_counter
 
-async def main(channel_username, post_limit):
+async def main(channel_username, post_limit, min_word_length):
     async with TelegramClient('session', api_id, api_hash) as client:
         logger.info("Connecting to Telegram...")
         await client.start(phone=phone_number)
@@ -62,11 +59,12 @@ async def main(channel_username, post_limit):
         
         logger.info(f"Starting to parse channel: {channel_username}")
         logger.info(f"Number of posts to analyze: {post_limit}")
+        logger.info(f"Minimum word length: {min_word_length}")
 
-        word_counts = await count_words(client, channel, post_limit)
+        word_counts = await count_words(client, channel, post_limit, min_word_length)
 
         logger.info("Parsing completed. Outputting results.")
-        print(f"\nTop 20 most frequently used words (minimum {MIN_WORD_LENGTH} letters):")
+        print(f"\nTop 20 most frequently used words (minimum {min_word_length} letters):")
         for word, count in word_counts.most_common(20):
             print(f"{word}: {count}")
 
@@ -74,6 +72,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Parser for counting words in a Telegram channel")
     parser.add_argument("channel", help="Channel username to analyze (without @ symbol)")
     parser.add_argument("limit", type=int, help="Number of posts to analyze")
+    parser.add_argument("--min-length", type=int, default=3, help="Minimum word length to consider (default: 3)")
     args = parser.parse_args()
 
-    asyncio.run(main(args.channel, args.limit))
+    asyncio.run(main(args.channel, args.limit, args.min_length))
