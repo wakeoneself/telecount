@@ -49,7 +49,6 @@ async def count_words(client, channel, limit):
 async def main(channel_username, post_limit):
     async with TelegramClient('session', api_id, api_hash) as client:
         await client.start(phone=phone_number)
-        logger.info("Client created")
 
         channel = await client.get_entity(channel_username)
         logger.info(f"Starting to parse channel: {channel_username}")
@@ -58,7 +57,7 @@ async def main(channel_username, post_limit):
         word_counts = await count_words(client, channel, post_limit)
 
         logger.info("Parsing completed. Outputting results.")
-        print(f"Top 20 most frequently used words (minimum {MIN_WORD_LENGTH} letters):")
+        print(f"\nTop 20 most frequently used words (minimum {MIN_WORD_LENGTH} letters):")
         for word, count in word_counts.most_common(20):
             print(f"{word}: {count}")
 
